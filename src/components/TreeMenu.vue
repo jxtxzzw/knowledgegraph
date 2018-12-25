@@ -6,7 +6,7 @@
               :label="c.label",
               :children="c.children",
               :depth="depth + idx.toString()")
-    MenuItem(v-else) {{ label }}
+    MenuItem(v-else :name="depth") {{ label }}
 </template>
 
 <script>

@@ -2,6 +2,7 @@
 
 import Vue from 'vue'
 import axios from 'axios'
+import iView from 'iview'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -18,10 +19,12 @@ const _axios = axios.create(config)
 
 _axios.interceptors.request.use(
   function (config) {
+    iView.LoadingBar.finish()
     // Do something before request is sent
     return config
   },
   function (error) {
+    iView.LoadingBar.error()
     // Do something with request error
     return Promise.reject(error)
   }
@@ -30,6 +33,7 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
   function (response) {
+    iView.LoadingBar.start()
     // Do something with response data
     return response
   },

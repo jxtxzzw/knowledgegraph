@@ -18,7 +18,7 @@
 
 <script>
 import TreeMenu from '@/components/TreeMenu.vue'
-// import { query } from '@/api.js'
+import { query } from '@/api.js'
 
 export default {
   data: () => {
@@ -55,13 +55,31 @@ export default {
     TreeMenu
   },
   created () {
-    // this.getTree(['疾病']).then(res => { this.tree = res })
+    this.getTree(['疾病']).then(res => {
+      this.tree = res
+      console.log(res)
+    })
+    query('疾病').then(res => console.log(res))
   },
   methods: {
     async getTree (arr) {
-      // arr.map(x => )
-      let data = []
-      return data
+      let res = []
+      for (let i in arr) {
+        console.log(arr[i])
+        const q = await query(arr[i])
+        if (q.hasOwnProperty('csyn')) {
+          console.log(q)
+          res.push({
+            label: q.csyn[0],
+            children: await this.getTree(q.child)
+          })
+        }
+        // console.log(q)
+        // console.log(q.csyn)
+        // console.log(q.csyn[0])
+        // console.log(q.child)
+      }
+      return res
     }
   }
 }
