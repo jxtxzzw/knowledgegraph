@@ -3,7 +3,7 @@
     Layout
       Sider(ref="side1", collapsible, :collapsed-width="78", v-model="isCollapsed")
         Menu(ref="sideMenu", width="auto", @on-select="loadData")
-          tree-menu(label="ALL", :children="tree", depth="0", :loaded="true")
+          tree-menu(v-for="(x, idx) in tree", :label="x.label", :children="x.children", :depth="idx.toString()", :loaded="true")
       Layout
         Header(:style="{padding:0}", class="layout-header-bar")
           Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
@@ -11,7 +11,7 @@
         Content(:style="{margin: '20px', background: '#fff', minHeight: '1000px'}")
           Card
             div(style="height: 1000px")
-            | content Block 1
+            Graph
         Content(:style="{margin: '20px', background: '#fff', minHeight: '60px'}")
           Card
             div(style="height: 60px")
@@ -20,6 +20,7 @@
 
 <script>
 import TreeMenu from '@/components/TreeMenu.vue'
+import Graph from '@/components/Graph.vue'
 import { query } from '@/api.js'
 
 export default {
@@ -28,6 +29,16 @@ export default {
       tree: [
         {
           label: '疾病',
+          children: [],
+          loaded: false
+        },
+        {
+          label: '症状',
+          children: [],
+          loaded: false
+        },
+        {
+          label: '检查',
           children: [],
           loaded: false
         }
@@ -51,14 +62,14 @@ export default {
     }
   },
   components: {
-    TreeMenu
+    TreeMenu, Graph
   },
   methods: {
     loadData (name) {
       let x = name.split('-').map(x => parseInt(x))
       let obj = this.tree
-      for (let i = 1; i < x.length; ++i) {
-        if (i !== 1) obj = obj.children
+      for (let i = 0; i < x.length; ++i) {
+        if (i !== 0) obj = obj.children
         obj = obj[x[i]]
       }
       if (obj.loaded) return
