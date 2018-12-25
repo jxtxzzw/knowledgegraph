@@ -3,24 +3,18 @@
 </template>
 
 <script>
+import { query } from '@/api'
+
 export default {
   name: 'Graph',
-  mounted: () => {
+  data: function () {
+    return {}
+  },
+  mounted: function () {
     const cytoscape = require('cytoscape')
-    let cy = cytoscape({
-      container: document.getElementById('cy'), // container to render in
-
-      elements: [ // list of graph elements to start with
-        { // node a
-          data: { id: 'a' }
-        },
-        { // node b
-          data: { id: 'b' }
-        },
-        { // edge ab
-          data: { id: 'ab', source: 'a', target: 'b' }
-        }
-      ],
+    this.cy = cytoscape({
+      container: document.getElementById('cy'),
+      headless: false,
 
       style: [ // the stylesheet for the graph
         {
@@ -43,11 +37,40 @@ export default {
       ],
 
       layout: {
-        name: 'grid',
-        rows: 1
+        name: 'cose'
       }
-
     })
+
+    this.generate('肺炎')
+    this.generate('胸闷')
+  },
+  methods: {
+    tryAddNode (u) {
+      this.cy.add({ group: 'nodes', data: { id: u } })
+    },
+    addEdge (u, v) {
+      console.log(u, v)
+      this.cy.add({ group: 'edges', data: { id: u + '-' + v, source: u, target: v } })
+    },
+    async generate (label) {
+      const data = await query(label)
+      if (!data.hasOwnProperty('csyn')) return
+      console.log(data)
+      const self = data.csyn[0]
+      this.tryAddNode(self)
+      for (let key in data) {
+        if (['病史', '病史逆', '相关症状', '相关症状逆'].indexOf(key) === -1) continue
+        const reverse = key[key.length - 1] === '逆'
+        for (let i in data[key]) {
+          const to = data[key][i]
+          this.tryAddNode(to)
+          if (!reverse) this.addEdge(self, to)
+          else this.addEdge(to, self)
+        }
+      }
+      let layout = this.cy.layout({ name: 'cose' })
+      layout.run()
+    }
   }
 }
 </script>

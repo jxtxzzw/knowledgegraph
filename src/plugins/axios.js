@@ -29,7 +29,6 @@ _axios.interceptors.request.use(
   }
 )
 
-
 // Add a response interceptor
 _axios.interceptors.response.use(
   function (response) {
