@@ -1,7 +1,7 @@
 <template lang="pug">
   .layout
     Layout
-      Sider(ref="side1", collapsible, :collapsed-width="78", v-model="isCollapsed")
+      Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed")
         Menu(ref="sideMenu", width="auto", @on-select="loadData")
           tree-menu(v-for="(x, idx) in tree", :label="x.label", :children="x.children", :depth="idx.toString()", :loaded="true")
       Layout
@@ -65,6 +65,9 @@ export default {
     TreeMenu, Graph
   },
   methods: {
+    collapsedSider () {
+      this.$refs.side1.toggleCollapse();
+    },
     loadData (name) {
       let x = name.split('-').map(x => parseInt(x))
       let obj = this.tree
