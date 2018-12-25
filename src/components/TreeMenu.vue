@@ -5,14 +5,15 @@
               :key="idx",
               :label="c.label",
               :children="c.children",
-              :depth="depth + idx.toString()")
-    MenuItem(v-else :name="depth") {{ label }}
+              :depth="depth + '-' + idx.toString()"
+              :loaded="c.loaded")
+    MenuItem(v-else :name="depth") {{ label }} {{ loaded ? '-' : '?' }}
 </template>
 
 <script>
 export default {
   name: 'TreeMenu',
-  props: ['label', 'children', 'depth']
+  props: ['label', 'depth', 'children', 'loaded']
 }
 </script>
 

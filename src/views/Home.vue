@@ -2,8 +2,8 @@
   .layout
     Layout
       Sider(ref="side1", collapsible, :collapsed-width="78", v-model="isCollapsed")
-        Menu(width="auto")
-          tree-menu(label="ALL", :children="tree", depth="1")
+        Menu(width="auto", @on-select="loadData", :open-names="submenuOpenNames")
+          tree-menu(label="ALL", :children="tree", depth="0", :loaded="true")
       Layout
         Header(:style="{padding:0}", class="layout-header-bar")
           Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
@@ -20,50 +20,18 @@
 
 <script>
 import TreeMenu from '@/components/TreeMenu.vue'
-// import { query } from '@/api.js'
+import { query } from '@/api.js'
 
 export default {
   data: () => {
     return {
+      submenuOpenNames: [],
       tree: [
         {
           label: '疾病',
-          children: [
-            {
-              label: 'aaa',
-              children: [
-                {
-                  label: 'xxx',
-                  children: []
-                }
-              ]
-            },
-            {
-              label: 'bbb',
-              children: [
-                {
-                  label: 'yyy',
-                  children: []
-                }
-              ]
-            }
-          ]
+          children: [],
+          loaded: false
         }
-      ],
-      isCollapsed: false
-    }
-  },
-  computed: {
-    rotateIcon () {
-      return [
-        'menu-icon',
-        this.isCollapsed ? 'rotate-icon' : ''
-      ]
-    },
-    menuitemClasses () {
-      return [
-        'menu-item',
-        this.isCollapsed ? 'collapsed-menu' : ''
       ]
     }
   },
@@ -71,17 +39,22 @@ export default {
   components: {
     TreeMenu
   },
-  created () {
-    // this.getTree(['疾病']).then(res => { this.tree = res })
-  },
   methods: {
-    async getTree (arr) {
-      // arr.map(x => )
-      let data = []
-      return data
-    },
-    collapsedSider () {
-      this.$refs.side1.toggleCollapse()
+    loadData (name) {
+      let x = name.split('-').map(x => parseInt(x))
+      let obj = this.tree
+      for (let i = 1; i < x.length; ++i) {
+        if (i !== 1) obj = obj.children
+        obj = obj[x[i]]
+      }
+      if (obj.loaded) return
+      obj.loaded = true
+      query(obj.label).then(res => {
+        if (res.hasOwnProperty('child')) {
+          console.log(res)
+          obj.children = res.child.map(x => { return { label: x, children: [], loaded: false } })
+        }
+      })
     }
   }
 }

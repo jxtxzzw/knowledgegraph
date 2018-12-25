@@ -14,31 +14,32 @@ let config = {
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 }
-
 const _axios = axios.create(config)
 
 _axios.interceptors.request.use(
   function (config) {
-    iView.LoadingBar.finish()
     // Do something before request is sent
+    iView.LoadingBar.start()
     return config
   },
   function (error) {
-    iView.LoadingBar.error()
     // Do something with request error
+    iView.LoadingBar.error()
     return Promise.reject(error)
   }
 )
 
+
 // Add a response interceptor
 _axios.interceptors.response.use(
   function (response) {
-    iView.LoadingBar.start()
     // Do something with response data
+    iView.LoadingBar.finish()
     return response
   },
   function (error) {
     // Do something with response error
+    iView.LoadingBar.error()
     return Promise.reject(error)
   }
 )
