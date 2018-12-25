@@ -2,7 +2,7 @@
   .layout
     Layout
       Sider(ref="side1", collapsible, :collapsed-width="78", v-model="isCollapsed")
-        Menu(width="auto", @on-select="loadData", :open-names="submenuOpenNames")
+        Menu(ref="sideMenu", width="auto", @on-select="loadData")
           tree-menu(label="ALL", :children="tree", depth="0", :loaded="true")
       Layout
         Header(:style="{padding:0}", class="layout-header-bar")
@@ -25,17 +25,31 @@ import { query } from '@/api.js'
 export default {
   data: () => {
     return {
-      submenuOpenNames: [],
       tree: [
         {
           label: '疾病',
           children: [],
           loaded: false
         }
-      ]
+      ],
+      isCollapsed: false
     }
   },
   name: 'home',
+  computed: {
+    rotateIcon () {
+      return [
+        'menu-icon',
+        this.isCollapsed ? 'rotate-icon' : ''
+      ]
+    },
+    menuitemClasses () {
+      return [
+        'menu-item',
+        this.isCollapsed ? 'collapsed-menu' : ''
+      ]
+    }
+  },
   components: {
     TreeMenu
   },
@@ -53,6 +67,10 @@ export default {
         if (res.hasOwnProperty('child')) {
           console.log(res)
           obj.children = res.child.map(x => { return { label: x, children: [], loaded: false } })
+          this.$nextTick(() => {
+            this.$refs.sideMenu.openedNames.push(name)
+            this.$refs.sideMenu.updateOpened()
+          })
         }
       })
     }
