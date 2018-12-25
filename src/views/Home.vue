@@ -1,24 +1,26 @@
 <template lang="pug">
   .layout
     Layout
-      Sider(:style="{position: 'fixed', height: '100vh', left: 0, overflow: 'auto'}")
-        Menu
+      Sider(ref="side1", collapsible, :collapsed-width="78", v-model="isCollapsed")
+        Menu(width="auto")
           tree-menu(label="ALL", :children="tree", depth="1")
-      Layout(:style="{marginLeft: '200px'}")
-        Header(:style="{background: '#fff', boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)'}") Header
-        Content(:style="{padding: '0 16px 16px'}")
-          Card(:style="{margin: '16px 0'}")
-            div(style="height: 600px")
-            | content
-        Content(:style="{padding: '0 16px 16px'}")
-          Card(:style="{margin: '16px 0'}")
-            div(style="height: 100px")
-            | content
+      Layout
+        Header(:style="{padding:0}", class="layout-header-bar")
+          Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
+            | Header
+        Content(:style="{margin: '20px', background: '#fff', minHeight: '1000px'}")
+          Card
+            div(style="height: 1000px")
+            | content Block 1
+        Content(:style="{margin: '20px', background: '#fff', minHeight: '60px'}")
+          Card
+            div(style="height: 60px")
+            | content Block 2
 </template>
 
 <script>
 import TreeMenu from '@/components/TreeMenu.vue'
-import { query } from '@/api.js'
+// import { query } from '@/api.js'
 
 export default {
   data: () => {
@@ -47,6 +49,21 @@ export default {
             }
           ]
         }
+      ],
+      isCollapsed: false
+    }
+  },
+  computed: {
+    rotateIcon () {
+      return [
+        'menu-icon',
+        this.isCollapsed ? 'rotate-icon' : ''
+      ]
+    },
+    menuitemClasses () {
+      return [
+        'menu-item',
+        this.isCollapsed ? 'collapsed-menu' : ''
       ]
     }
   },
@@ -55,31 +72,16 @@ export default {
     TreeMenu
   },
   created () {
-    this.getTree(['疾病']).then(res => {
-      this.tree = res
-      console.log(res)
-    })
-    query('疾病').then(res => console.log(res))
+    // this.getTree(['疾病']).then(res => { this.tree = res })
   },
   methods: {
     async getTree (arr) {
-      let res = []
-      for (let i in arr) {
-        console.log(arr[i])
-        const q = await query(arr[i])
-        if (q.hasOwnProperty('csyn')) {
-          console.log(q)
-          res.push({
-            label: q.csyn[0],
-            children: await this.getTree(q.child)
-          })
-        }
-        // console.log(q)
-        // console.log(q.csyn)
-        // console.log(q.csyn[0])
-        // console.log(q.child)
-      }
-      return res
+      // arr.map(x => )
+      let data = []
+      return data
+    },
+    collapsedSider () {
+      this.$refs.side1.toggleCollapse()
     }
   }
 }
@@ -92,5 +94,47 @@ export default {
     position: relative;
     border-radius: 4px;
     overflow: hidden;
+  }
+  .layout-header-bar{
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  }
+  .layout-logo-left{
+    width: 90%;
+    height: 30px;
+    background: #5b6270;
+    border-radius: 3px;
+    margin: 15px auto;
+  }
+  .menu-icon{
+    transition: all .3s;
+  }
+  .rotate-icon{
+    transform: rotate(-90deg);
+  }
+  .menu-item span{
+    display: inline-block;
+    overflow: hidden;
+    width: 69px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+    transition: width .2s ease .2s;
+  }
+  .menu-item i{
+    transform: translateX(0px);
+    transition: font-size .2s ease, transform .2s ease;
+    vertical-align: middle;
+    font-size: 16px;
+  }
+  .collapsed-menu span{
+    width: 0px;
+    transition: width .2s ease;
+  }
+  .collapsed-menu i{
+    transform: translateX(5px);
+    transition: font-size .2s ease .2s, transform .2s ease .2s;
+    vertical-align: middle;
+    font-size: 22px;
   }
 </style>
