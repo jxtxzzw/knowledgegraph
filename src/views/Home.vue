@@ -1,21 +1,25 @@
 <template lang="pug">
   .layout
     Layout
-      Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed")
+      Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed", :style="{minHeight: '-webkit-fill-available'}")
         Menu(ref="sideMenu", width="auto", @on-select="loadData")
           tree-menu(v-for="(x, idx) in tree", :label="x.label", :children="x.children", :depth="idx.toString()", :loaded="true")
       Layout
         Header(:style="{padding:0}", class="layout-header-bar")
           Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
             | Header
-        Content(:style="{margin: '20px', background: '#fff', minHeight: '1000px'}")
+        Content(:style="{margin: '20px', background: '#fff'}")
           Card
-            div(style="height: 1000px")
             Graph
-        Content(:style="{margin: '20px', background: '#fff', minHeight: '60px'}")
+        Content(:style="{margin: '20px', background: '#fff'}")
           Card
-            div(style="height: 60px")
-            | content Block 2
+            p(slot="title") 修改结点属性
+            p 内容
+            p 内容
+            Button(type="primary") 按钮
+            p 内容
+            Input(v-model="value", placeholder="Enter something...", style="{width: auto}")
+            Button(type="primary", loading) 修改中……
 </template>
 
 <script>
