@@ -24,8 +24,8 @@ module.exports = {
     devServer: {
         open: true,
         host: '0.0.0.0',
-        port: 80,
-        https: false,
+        port: 443,
+        https: true,
         hotOnly: false,
         proxy: {
 		  '/NLI': {
