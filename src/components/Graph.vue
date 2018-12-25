@@ -41,16 +41,22 @@ export default {
       }
     })
 
+    this.cy.on('tap', 'node', function (evt) {
+      this.generate(evt.target.id())
+    }.bind(this))
+
     this.generate('肺炎')
     this.generate('胸闷')
   },
   methods: {
     tryAddNode (u) {
+      if (this.cy.getElementById(u).length > 0) return
       this.cy.add({ group: 'nodes', data: { id: u } })
     },
     addEdge (u, v) {
-      console.log(u, v)
-      this.cy.add({ group: 'edges', data: { id: u + '-' + v, source: u, target: v } })
+      const id = u + '-' + v
+      if (this.cy.getElementById(id).length > 0) return
+      this.cy.add({ group: 'edges', data: { id, source: u, target: v } })
     },
     async generate (label) {
       const data = await query(label)
