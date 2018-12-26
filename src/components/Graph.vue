@@ -1,9 +1,10 @@
 <template lang="pug">
-    #cy
+    #network
 </template>
 
 <script>
 import { query } from '@/api'
+import { cutName } from '@/utils'
 
 export default {
   name: 'Graph',
@@ -11,52 +12,29 @@ export default {
     return {}
   },
   mounted: function () {
-    const cytoscape = require('cytoscape')
-    this.cy = cytoscape({
-      container: document.getElementById('cy'),
-      headless: false,
-
-      style: [ // the stylesheet for the graph
-        {
-          selector: 'node',
-          style: {
-            'background-color': '#666',
-            'label': 'data(id)'
-          }
-        },
-
-        {
-          selector: 'edge',
-          style: {
-            'width': 3,
-            'line-color': '#ccc',
-            'target-arrow-color': '#ccc',
-            'target-arrow-shape': 'triangle'
-          }
-        }
-      ],
-
-      layout: {
-        name: 'cose'
+    const vis = require('vis')
+    this.nodes = new vis.DataSet()
+    this.edges = new vis.DataSet()
+    const options = {
+      interaction: { hover: true },
+      edges: {
+        arrows: 'to'
       }
-    })
-
-    this.cy.on('tap', 'node', function (evt) {
-      this.generate(evt.target.id())
-    }.bind(this))
-
+    }
+    const data = { nodes: this.nodes, edges: this.edges }
+    this.network = new vis.Network(document.getElementById('network'), data, options)
+    this.network.on('selectNode', ({ nodes }) => this.generate(nodes[0]))
     this.generate('肺炎')
-    this.generate('胸闷')
   },
   methods: {
     tryAddNode (u) {
-      if (this.cy.getElementById(u).length > 0) return
-      this.cy.add({ group: 'nodes', data: { id: u } })
+      if (this.nodes.get(u) != null) return
+      this.nodes.add({ id: u, label: cutName(u), title: u })
     },
-    addEdge (u, v) {
+    addEdge (u, v, title) {
       const id = u + '-' + v
-      if (this.cy.getElementById(id).length > 0) return
-      this.cy.add({ group: 'edges', data: { id, source: u, target: v } })
+      if (this.edges.get(id) != null) return
+      this.edges.add({ id: id, from: u, to: v, title })
     },
     async generate (label) {
       const data = await query(label)
@@ -69,22 +47,21 @@ export default {
         const reverse = key[key.length - 1] === '逆'
         for (let i in data[key]) {
           const to = data[key][i]
+          const title = reverse ? key.slice(0, -1) : key
           this.tryAddNode(to)
-          if (!reverse) this.addEdge(self, to)
-          else this.addEdge(to, self)
+          if (!reverse) this.addEdge(self, to, title)
+          else this.addEdge(to, self, title)
         }
       }
-      let layout = this.cy.layout({ name: 'cose' })
-      layout.run()
     }
   }
 }
 </script>
 
 <style scoped>
-  #cy {
-    width: 800px;
+  #network {
+    width: 1000px;
     height: 800px;
-    display: block;
+    border: 1px solid lightgray;
   }
 </style>
