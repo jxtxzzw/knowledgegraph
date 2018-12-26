@@ -12,6 +12,10 @@ export default {
     return {}
   },
   mounted: function () {
+    this.colorSet = [ '#60acfc', '#32d3eb', '#5bc49f', '#feb64d', '#ff7c7c' ]
+    this.lastUnusedColor = 0
+    this.consToColorMap = {}
+
     const vis = require('vis')
     this.nodes = new vis.DataSet()
     this.edges = new vis.DataSet()
@@ -19,6 +23,9 @@ export default {
       interaction: { hover: true },
       edges: {
         arrows: 'to'
+      },
+      physics: {
+        solver: 'forceAtlas2Based'
       }
     }
     const data = { nodes: this.nodes, edges: this.edges }
@@ -27,30 +34,41 @@ export default {
     this.generate('肺炎')
   },
   methods: {
-    tryAddNode (u) {
+    async tryAddNode (u) {
       if (this.nodes.get(u) != null) return
-      this.nodes.add({ id: u, label: cutName(u), title: u })
+
+      const data = await query(u)
+      const cons = data.parents[0]
+      console.log(cons, this.colorSet)
+      if (!(cons in this.consToColorMap)) this.consToColorMap[cons] = this.colorSet[this.lastUnusedColor++]
+
+      this.nodes.add({ id: u, label: cutName(u), title: u, color: this.consToColorMap[cons] })
     },
-    addEdge (u, v, title) {
+    async addEdge (u, v, title) {
+      await this.tryAddNode(u)
+      await this.tryAddNode(v)
+
       const id = u + '-' + v
-      if (this.edges.get(id) != null) return
-      this.edges.add({ id: id, from: u, to: v, title })
+      this.edges.update({ id: id, from: u, to: v, title })
     },
     async generate (label) {
       const data = await query(label)
       if (!data.hasOwnProperty('csyn')) return
       console.log(data)
       const self = data.csyn[0]
-      this.tryAddNode(self)
+
       for (let key in data) {
-        if (['病史', '病史逆', '相关症状', '相关症状逆'].indexOf(key) === -1) continue
+        if (['病史', '病史逆',
+          '相关症状', '相关症状逆',
+          '病因', '病因逆',
+          '鉴别诊断', '鉴别诊断逆',
+          '引发', '引发逆'].indexOf(key) === -1) continue
         const reverse = key[key.length - 1] === '逆'
         for (let i in data[key]) {
           const to = data[key][i]
           const title = reverse ? key.slice(0, -1) : key
-          this.tryAddNode(to)
-          if (!reverse) this.addEdge(self, to, title)
-          else this.addEdge(to, self, title)
+          if (!reverse) await this.addEdge(self, to, title)
+          else await this.addEdge(to, self, title)
         }
       }
     }
