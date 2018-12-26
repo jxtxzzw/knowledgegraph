@@ -9,7 +9,7 @@ import { cutName } from '@/utils'
 export default {
   name: 'Graph',
   data: function () {
-    return {}
+    return { value: '' }
   },
   mounted: function () {
     this.colorSet = [ '#60acfc', '#32d3eb', '#5bc49f', '#feb64d', '#ff7c7c' ]
@@ -26,6 +26,48 @@ export default {
       },
       physics: {
         solver: 'forceAtlas2Based'
+      },
+      manipulation: {
+        enabled: true,
+        addNode: false,
+        addEdge: (edgeData, callback) => {
+          const { from, to } = edgeData
+          this.$Modal.confirm({
+            render: (h) => {
+              return h('Input', {
+                props: { value: '', autofocus: true, placeholder: `请输入 ${from} 到 ${to} 的关系（如：相关疾病）` },
+                on: {
+                  input: (val) => { this.value = val }
+                }
+              })
+            },
+            onCancel: () => {
+              callback()
+            },
+            onOk: () => {
+              console.log(this.value)
+              query(`${from}.${this.value}+=${to}`).then(data => {
+                callback(edgeData)
+              }).catch(e => callback())
+            }
+          })
+        },
+        deleteEdge: (data, callback) => {
+          const edge = this.edges.get(data.edges[0])
+
+          this.$Modal.confirm({
+            content: `你确定要删除${edge.from}到${edge.to}的${edge.title}的关系吗`,
+            onCancel: () => { callback() },
+            onOk: () => {
+              query(`${edge.from}.${edge.title}-=${edge.to}`).then(res => {
+                callback(data)
+              }).catch(e => callback())
+            }
+          })
+        },
+        deleteNode: false,
+        editEdge: false,
+        editNode: false
       }
     }
     const data = { nodes: this.nodes, edges: this.edges }
@@ -39,7 +81,6 @@ export default {
 
       const data = await query(u)
       const cons = data.parents[0]
-      console.log(cons, this.colorSet)
       if (!(cons in this.consToColorMap)) this.consToColorMap[cons] = this.colorSet[this.lastUnusedColor++]
 
       this.nodes.add({ id: u, label: cutName(u), title: u, color: this.consToColorMap[cons] })
@@ -54,7 +95,6 @@ export default {
     async generate (label) {
       const data = await query(label)
       if (!data.hasOwnProperty('csyn')) return
-      console.log(data)
       const self = data.csyn[0]
 
       for (let key in data) {
