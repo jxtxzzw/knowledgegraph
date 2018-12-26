@@ -27,7 +27,6 @@
 import TreeMenu from '@/components/TreeMenu.vue'
 import Graph from '@/components/Graph.vue'
 import { query } from '@/api.js'
-
 export default {
   data: () => {
     return {
@@ -104,6 +103,9 @@ export default {
     position: relative;
     border-radius: 4px;
     overflow: hidden;
+  }
+  .list{
+    height: 1500px;
   }
   .layout-header-bar{
     background: #fff;
