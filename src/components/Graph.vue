@@ -1,5 +1,5 @@
 <template lang="pug">
-    #network
+  #network
 </template>
 
 <script>
@@ -12,9 +12,8 @@ export default {
     return { value: '' }
   },
   mounted: function () {
-    this.colorSet = [ '#60acfc', '#32d3eb', '#5bc49f', '#feb64d', '#ff7c7c' ]
-    this.lastUnusedColor = 0
-    this.consToColorMap = {}
+    this.groupSet = ['disease', 'symptom', 'examination']
+    this.consToGroupMap = {}
 
     const vis = require('vis')
     this.nodes = new vis.DataSet()
@@ -23,6 +22,27 @@ export default {
       interaction: { hover: true },
       edges: {
         arrows: 'to'
+      },
+      groups: {
+        useDefaultGroups: true,
+        disease: {
+          color: {
+            background: '#60acfc' },
+          borderWidth: 3,
+          shape: 'box'
+        },
+        symptom: {
+          color: {
+            background: '#feb64d' },
+          borderWidth: 3,
+          shape: 'circle'
+        },
+        examination: {
+          color: {
+            background: '#5bc49f' },
+          borderWidth: 3,
+          shape: 'square'
+        }
       },
       physics: {
         solver: 'forceAtlas2Based'
@@ -81,9 +101,9 @@ export default {
 
       const data = await query(u)
       const cons = data.parents[0]
-      if (!(cons in this.consToColorMap)) this.consToColorMap[cons] = this.colorSet[this.lastUnusedColor++]
 
-      this.nodes.add({ id: u, label: cutName(u), title: u, color: this.consToColorMap[cons] })
+      if (!(cons in this.consToGroupMap)) this.consToGroupMap[cons] = this.groupSet[this.lastUnusedColor++]
+      this.nodes.add({ id: u, label: cutName(u), title: u, group: this.consToGroupMap[cons] })
     },
     async addEdge (u, v, title) {
       await this.tryAddNode(u)
