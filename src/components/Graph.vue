@@ -188,7 +188,7 @@ export default {
             },
             onOk: () => {
               console.log(this.value)
-              query(`${from}.${this.value}+=${to}`).then(data => {
+              query(`${from}.${this.value}add=${to}`).then(data => {
                 callback(edgeData)
               }).catch(e => callback())
             }
@@ -201,7 +201,7 @@ export default {
             content: `你确定要删除${edge.from}到${edge.to}的${edge.title}的关系吗`,
             onCancel: () => { callback() },
             onOk: () => {
-              query(`${edge.from}.${edge.title}-=${edge.to}`).then(res => {
+              query(`${edge.from}.${edge.title}minus=${edge.to}`).then(res => {
                 callback(data)
               }).catch(e => callback())
             }
