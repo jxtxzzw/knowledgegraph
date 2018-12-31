@@ -171,7 +171,27 @@ export default {
       },
       manipulation: {
         enabled: true,
-        addNode: false,
+        addNode: (nodeData, callback) => {
+          this.$Modal.confirm({
+            render: (h, v) => {
+              return h('Input', {
+                props: { value: '', autofocus: true, placeholder: `请输入节点名称` },
+                on: {
+                  input: (val) => { nodeData.label = val }
+                }
+              })
+            },
+            onCancel: () => {
+              callback()
+            },
+            onOk: () => {
+              console.log(this.value)
+              query(`实例add=${nodeData.label}`).then(res => {
+                callback(nodeData)
+              }).catch(e => callback())
+            }
+          })
+        },
         addEdge: (edgeData, callback) => {
           const { from, to } = edgeData
           this.$Modal.confirm({
