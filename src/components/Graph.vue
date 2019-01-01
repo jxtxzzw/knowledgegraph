@@ -177,7 +177,7 @@ export default {
               return h('Input', {
                 props: { value: '', autofocus: true, placeholder: `请输入节点名称` },
                 on: {
-                  input: (val) => { nodeData.label = val }
+                  input: (val) => { nodeData.label = nodeData.id = val }
                 }
               })
             },
@@ -230,10 +230,10 @@ export default {
         deleteNode: (data, callback) => {
           const node = this.nodes.get(data.nodes[0])
           this.$Modal.confirm({
-            content: `你确定要删除${node.label}节点吗`,
+            content: `你确定要删除${node.id}节点吗`,
             onCancel: () => { callback() },
             onOk: () => {
-              query(`概念minus=${node.label}`).then(res => {
+              query(`概念minus=${node.id}`).then(res => {
                 callback(data)
               }).catch(e => callback())
             }
@@ -270,7 +270,7 @@ export default {
       if (!data.hasOwnProperty('csyn')) return
       const self = data.csyn[0]
 
-      await this.addNode(self)
+      await this.tryAddNode(self)
 
       for (let key in data) {
         if (['病史', '病史逆',
