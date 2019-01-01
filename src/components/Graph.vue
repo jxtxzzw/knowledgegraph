@@ -246,7 +246,7 @@ export default {
     const data = { nodes: this.nodes, edges: this.edges }
     this.network = new vis.Network(document.getElementById('network'), data, options)
     this.network.on('selectNode', ({ nodes }) => this.generate(nodes[0]))
-    this.generate('肺炎')
+    this.generate('肺癌')
   },
   methods: {
     async tryAddNode (u) {
@@ -270,12 +270,15 @@ export default {
       if (!data.hasOwnProperty('csyn')) return
       const self = data.csyn[0]
 
+      await this.addNode(self)
+
       for (let key in data) {
         if (['病史', '病史逆',
           '相关症状', '相关症状逆',
           '病因', '病因逆',
           '鉴别诊断', '鉴别诊断逆',
-          '引发', '引发逆'].indexOf(key) === -1) continue
+          '引发', '引发逆',
+          '相关疾病', '相关疾病逆'].indexOf(key) === -1) continue
         const reverse = key[key.length - 1] === '逆'
         for (let i in data[key]) {
           const to = data[key][i]
