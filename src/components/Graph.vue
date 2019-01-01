@@ -227,7 +227,18 @@ export default {
             }
           })
         },
-        deleteNode: false,
+        deleteNode: (data, callback) => {
+          const node = this.nodes.get(data.nodes[0])
+          this.$Modal.confirm({
+            content: `你确定要删除${node.label}节点吗`,
+            onCancel: () => { callback() },
+            onOk: () => {
+              query(`概念minus=${node.label}`).then(res => {
+                callback(data)
+              }).catch(e => callback())
+            }
+          })
+        },
         editEdge: false,
         editNode: false
       }
