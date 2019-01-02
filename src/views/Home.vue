@@ -142,3 +142,31 @@ export default {
     font-size: 22px;
   }
 </style>
+
+<style>
+  ::-webkit-scrollbar{width:6px!important;height:6px!important;}
+  body::-webkit-scrollbar{width:6px!important;height:6px!important;}
+  ::-webkit-scrollbar-track{background:rgba(255,255,255,0.22)!important;border-radius:8px!important;}
+  ::-webkit-scrollbar-thumb{background-color:#343434 !important;min-height:50px;border-radius:5px!important;}
+  @keyframes fadein {
+    0% {opacity: 0;}
+    100% {}
+  }
+  body {
+    animation-name: fadein;
+    animation-duration: 0.4s;
+  }
+  scrollbar *
+  scrollbar scrollbarbutton{visibility:collapse!important;}
+  scrollbar scrollbarbutton{display:none!important;}
+  scrollbar[orient="vertical"]{background:rgba(255,255,255,0.22) url(https://pbs.twimg.com/media/CKecQtCWoAA8keI.png)!important;-moz-appearance:none!important;min-width:2px!important;max-width:2px!important;border-radius:5px;}
+  scrollbar[orient="vertical"]:hover{-moz-appearance:none!important;}
+  scrollbar thumb[orient="vertical"]{background:#6B6B6B!important;-moz-appearance:none!important;border-radius:4px!important;min-height:25px!important;min-width:2px!important;max-width:2px!important;border:1px!important;opacity:0.87;}
+  scrollbar thumb[orient="vertical"]:hover{background:#6B6B6B!important;border-radius:4px!important;border:0px!important;opacity:1;}
+  scrollbar[orient="horizontal"]{background:rgba(255,255,255,0.22) url(https://pbs.twimg.com/media/CKecQtCWoAA8keI.png)!important;-moz-appearance:none!important;background-color:transparent!important;opacity:.75!important;min-height:2px!important;max-height:9px!important;border-radius:5px;}
+  scrollbar[orient="horizontal"]:hover{-moz-appearance:none!important;background-color:transparent!important;min-height:9px!important;max-height:9px!important}
+  scrollbar thumb[orient="horizontal"]{background:#6B6B6B!important;-moz-appearance:none!important;border-radius:4px!important;min-height:7px!important;max-height:7px!important;border:1px!important;margin-left:0px!important;opacity:0.87;}
+  scrollbar thumb[orient="horizontal"]:hover{background:#6B6B6B!important;border-radius:4px!important;border:0px!important;opacity:1;}
+  scrollcorner{opacity:0!important}
+  scrollbar scrollcorner:hover{background:transparent!important}
+</style>
