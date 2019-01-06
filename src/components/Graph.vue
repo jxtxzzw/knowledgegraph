@@ -28,7 +28,7 @@ export default {
         Group1: {
           color: {
             background: '#69c0ff' },
-          borderWidth: 3,
+          borderWidth: 0,
           shape: 'box',
           shapeProperties: {
             borderDashes: false,
@@ -41,7 +41,7 @@ export default {
         Group2: {
           color: {
             background: '#fadb14' },
-          borderWidth: 3,
+          borderWidth: 0,
           shape: 'ellipse'
         },
         Group3: {
@@ -174,19 +174,100 @@ export default {
         addNode: (nodeData, callback) => {
           this.$Modal.confirm({
             render: (h, v) => {
-              return h('Input', {
+              return h('div', [h('Select', {
+                props: {
+                  placeholder: `请选择节点父亲`
+                },
+                on: {
+                  'on-change': (event) => { this.value = event }
+                }
+              },
+              [
+                h('Option', {
+                  props: {
+                    value: '疾病'
+                  }
+                }, '疾病'),
+                h('Option', {
+                  props: {
+                    value: '症状'
+                  }
+                }, '症状'),
+                h('Option', {
+                  props: {
+                    value: '部位'
+                  }
+                }, '部位'),
+                h('Option', {
+                  props: {
+                    value: '人群'
+                  }
+                }, '人群'),
+                h('Option', {
+                  props: {
+                    value: '检查'
+                  }
+                }, '检查'),
+                h('Option', {
+                  props: {
+                    value: 'string'
+                  }
+                }, 'string'),
+                h('Option', {
+                  props: {
+                    value: '疾病诊断方法'
+                  }
+                }, '疾病诊断方法'),
+                h('Option', {
+                  props: {
+                    value: '治疗'
+                  }
+                }, '治疗'),
+                h('Option', {
+                  props: {
+                    value: '病原'
+                  }
+                }, '病原'),
+                h('Option', {
+                  props: {
+                    value: '传染情况'
+                  }
+                }, '传染情况'),
+                h('Option', {
+                  props: {
+                    value: '遗传情况'
+                  }
+                }, '遗传情况'),
+                h('Option', {
+                  props: {
+                    value: '环境因素'
+                  }
+                }, '环境因素'),
+                h('Option', {
+                  props: {
+                    value: '患病原因'
+                  }
+                }, '患病原因'),
+                h('Option', {
+                  props: {
+                    value: '传播途径'
+                  }
+                }, '传播途径')
+              ]),
+              h('Input', {
                 props: { value: '', autofocus: true, placeholder: `请输入节点名称` },
                 on: {
                   input: (val) => { nodeData.label = nodeData.id = val }
                 }
-              })
+              })])
             },
             onCancel: () => {
               callback()
             },
             onOk: () => {
-              console.log(this.value)
-              query(`实例add=${nodeData.label}`).then(res => {
+              console.log(nodeData.parent)
+              query(`实例add=${nodeData.label}`)
+              query(`${this.value}.insadd=${nodeData.label}`).then(res => {
                 callback(nodeData)
               }).catch(e => callback())
             }
