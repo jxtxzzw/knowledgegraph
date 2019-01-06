@@ -2,7 +2,7 @@
   .layout
     Layout
       Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed", :style="{minHeight: '-webkit-fill-available'}")
-        scroll(height="1500")
+        scroll
           Menu(ref="sideMenu", width="auto", @on-select="loadData")
             tree-menu(v-for="(x, idx) in tree", :label="x.label", :children="x.children", :depth="idx.toString()", :loaded="true")
       Layout
@@ -39,10 +39,13 @@ export default {
         }
       ],
       isCollapsed: false,
-      selfAdaptiveHeight: document.body.getBoundingClientRect().height
+      selfAdaptiveHeight: 0
     }
   },
   name: 'home',
+  mounted: function () {
+    this.selfAdaptiveHeight = document.body.getBoundingClientRect().height
+  },
   computed: {
     rotateIcon () {
       return [

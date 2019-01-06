@@ -193,7 +193,8 @@ export default {
               return h('div',
                 [h('Select', {
                   props: {
-                    placeholder: `请选择节点父亲`
+                    placeholder: `请选择节点父亲`,
+                    filterable: ''
                   },
                   on: {
                     'on-change': (event) => { this.value = event }
