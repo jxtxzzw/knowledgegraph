@@ -9,9 +9,15 @@ import { cutName } from '@/utils'
 export default {
   name: 'Graph',
   data: function () {
-    return { value: '' }
+    return {
+      value: '',
+      concepts: []
+    }
   },
   mounted: function () {
+    query('概念').then(res => {
+      this.concepts = res.result
+    })
     this.groupSet = ['Group1', 'Group2', 'Group3', 'Group4', 'Group5', 'Group6', 'Group7', 'Group8', 'Group9', 'Group10', 'Group11', 'Group12', 'Group13', 'Group14']
     this.consToGroupMap = {}
     this.lastUnusedGroup = 0
@@ -174,92 +180,31 @@ export default {
         addNode: (nodeData, callback) => {
           this.$Modal.confirm({
             render: (h, v) => {
-              return h('div', [h('Select', {
-                props: {
-                  placeholder: `请选择节点父亲`
-                },
-                on: {
-                  'on-change': (event) => { this.value = event }
-                }
-              },
-              [
-                h('Option', {
+              let parentNodeList = []
+              for (let concept of this.concepts) {
+                parentNodeList.push(
+                  h('Option', {
+                    props: {
+                      value: concept.toString()
+                    }
+                  }, concept.toString())
+                )
+              }
+              return h('div',
+                [h('Select', {
                   props: {
-                    value: '疾病'
+                    placeholder: `请选择节点父亲`
+                  },
+                  on: {
+                    'on-change': (event) => { this.value = event }
                   }
-                }, '疾病'),
-                h('Option', {
-                  props: {
-                    value: '症状'
+                }, parentNodeList),
+                h('Input', {
+                  props: { value: '', autofocus: true, placeholder: `请输入节点名称` },
+                  on: {
+                    input: (val) => { nodeData.label = nodeData.id = val }
                   }
-                }, '症状'),
-                h('Option', {
-                  props: {
-                    value: '部位'
-                  }
-                }, '部位'),
-                h('Option', {
-                  props: {
-                    value: '人群'
-                  }
-                }, '人群'),
-                h('Option', {
-                  props: {
-                    value: '检查'
-                  }
-                }, '检查'),
-                h('Option', {
-                  props: {
-                    value: 'string'
-                  }
-                }, 'string'),
-                h('Option', {
-                  props: {
-                    value: '疾病诊断方法'
-                  }
-                }, '疾病诊断方法'),
-                h('Option', {
-                  props: {
-                    value: '治疗'
-                  }
-                }, '治疗'),
-                h('Option', {
-                  props: {
-                    value: '病原'
-                  }
-                }, '病原'),
-                h('Option', {
-                  props: {
-                    value: '传染情况'
-                  }
-                }, '传染情况'),
-                h('Option', {
-                  props: {
-                    value: '遗传情况'
-                  }
-                }, '遗传情况'),
-                h('Option', {
-                  props: {
-                    value: '环境因素'
-                  }
-                }, '环境因素'),
-                h('Option', {
-                  props: {
-                    value: '患病原因'
-                  }
-                }, '患病原因'),
-                h('Option', {
-                  props: {
-                    value: '传播途径'
-                  }
-                }, '传播途径')
-              ]),
-              h('Input', {
-                props: { value: '', autofocus: true, placeholder: `请输入节点名称` },
-                on: {
-                  input: (val) => { nodeData.label = nodeData.id = val }
-                }
-              })])
+                })])
             },
             onCancel: () => {
               callback()
