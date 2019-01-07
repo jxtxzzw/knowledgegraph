@@ -70,7 +70,7 @@ export default {
       obj.loaded = true
       query(obj.label).then(res => {
         if (res.hasOwnProperty('child')) {
-          console.log(res)
+          // console.log(res)
           obj.children = res.child.map(x => { return { label: x, children: [], loaded: false } })
           this.$nextTick(() => {
             this.$refs.sideMenu.openedNames.push(name)
@@ -78,7 +78,7 @@ export default {
           })
         }
       })
-      window.generateLabel(obj.label).then(_ => {})
+      if (x.length !== 1) window.generateLabel(obj.label).then(_ => {})
     }
   }
 }
