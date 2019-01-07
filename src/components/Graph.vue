@@ -15,6 +15,8 @@ export default {
     }
   },
   mounted: function () {
+    window.generateLabel = this.generate
+
     query('概念').then(res => {
       this.concepts = res.result
     })
@@ -266,14 +268,14 @@ export default {
             }
           })
         },
-        editEdge: false,
-        editNode: false
+        editEdge: false
+        // editNode: false
       }
     }
     const data = { nodes: this.nodes, edges: this.edges }
     this.network = new vis.Network(document.getElementById('network'), data, options)
     this.network.on('selectNode', ({ nodes }) => this.generate(nodes[0]))
-    this.generate('肺癌')
+    // this.generate('肺癌')
   },
   methods: {
     async tryAddNode (u) {
