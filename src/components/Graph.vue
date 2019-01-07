@@ -302,12 +302,7 @@ export default {
       await this.tryAddNode(self)
 
       for (let key in data) {
-        if (['病史', '病史逆',
-          '相关症状', '相关症状逆',
-          '病因', '病因逆',
-          '鉴别诊断', '鉴别诊断逆',
-          '引发', '引发逆',
-          '相关疾病', '相关疾病逆'].indexOf(key) === -1) continue
+        if (['parents', 'attr', 'csyn'].indexOf(key) !== -1) continue
         const reverse = key[key.length - 1] === '逆'
         for (let i in data[key]) {
           const to = data[key][i]

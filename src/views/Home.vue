@@ -4,7 +4,12 @@
       Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed", :style="{minHeight: '-webkit-fill-available'}")
         scroll
           Menu(ref="sideMenu", width="auto", @on-select="loadData")
-            tree-menu(v-for="(x, idx) in tree", :label="x.label", :children="x.children", :depth="idx.toString()", :loaded="true")
+            tree-menu(v-for="(x, idx) in tree",
+                      :key="x.label",
+                      :label="x.label",
+                      :children="x.children",
+                      :depth="idx.toString()",
+                      :loaded="true")
       Layout
         Header(:style="{padding:0}", class="layout-header-bar")
           Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
