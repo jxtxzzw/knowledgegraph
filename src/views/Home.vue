@@ -3,8 +3,21 @@
     Layout
       Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed", :style="{minHeight: '-webkit-fill-available'}")
         Scroll(height="1100")
-          Menu(ref="sideMenu", width="auto", @on-select="loadData")
-            tree-menu(v-for="(x, idx) in tree", :label="x.label", :children="x.children", :depth="idx.toString()", :loaded="true")
+          Div(v-if="!isCollapsed" )
+            Menu(ref="sideMenu", width="auto", @on-select="loadData")
+              MenuItem
+                Icon(type="ios-search")
+                | 查询
+              tree-menu(v-for="(x, idx) in tree", :label="x.label", :children="x.children", :depth="idx.toString()", :loaded="true")
+              MenuItem
+                Icon(type="ios-settings")
+                | 设置
+          Div(v-else)
+            Menu(ref="sideMenu", width="auto")
+              MenuItem
+                Icon(type="ios-search")
+              MenuItem
+                Icon(type="ios-settings")
       Layout
         Header(:style="{padding:0}", class="layout-header-bar")
           Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
