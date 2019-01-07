@@ -321,7 +321,8 @@ export default {
 
 <style scoped>
   #network {
-    height: 1500px;
+    height: 1000px;
+    width: 100%;
     border: 2px solid lightgray;
     border-radius: 5px;
   }
