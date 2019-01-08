@@ -149,12 +149,17 @@ export default {
       if (!(cons in this.consToGroupMap)) this.consToGroupMap[cons] = this.groupSet[this.lastUnusedGroup++]
       this.nodes.add({ id: u, label: cutName(u), title: u, group: this.consToGroupMap[cons] })
     },
-    async addEdge (u, v, title) {
+    async addEdge (u, v, title, dashes) {
       await this.tryAddNode(u)
       await this.tryAddNode(v)
-
+      if (dashes === undefined) dashes = false
       const id = u + '-' + v
-      this.edges.update({ id: id, from: u, to: v, title })
+      this.edges.update({ id: id, from: u, to: v, title, dashes })
+    },
+    async applyRule (u, v, relationship) {
+      const data = await query(v)
+      if (!data.hasOwnProperty(relationship[1])) return
+      for (let z of data[relationship[1]]) await this.addEdge(u, z, relationship[2], true)
     },
     async generate (label) {
       const data = await query(label)
@@ -171,6 +176,10 @@ export default {
           const title = reverse ? key.slice(0, -1) : key
           if (!reverse) await this.addEdge(self, to, title)
           else await this.addEdge(to, self, title)
+
+          for (let x of window.customRule) {
+            if (x[0] === key) await this.applyRule(self, to, x)
+          }
         }
       }
     }

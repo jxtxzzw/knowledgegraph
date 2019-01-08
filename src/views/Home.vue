@@ -14,6 +14,7 @@
         Header(:style="{padding:0}", class="layout-header-bar")
           Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
             | Header
+          Rule
         Content(:style="{margin: '20px', background: '#fff', height: 'auto'}")
           Card(:style="{width: 'auto', minHeight: '-webkit-fill-available'}")
             Graph(:style="{width: 'auto', minHeight: '-webkit-fill-available' }")
@@ -22,7 +23,9 @@
 <script>
 import TreeMenu from '@/components/TreeMenu.vue'
 import Graph from '@/components/Graph.vue'
+import Rule from '@/components/Rule.vue'
 import { query } from '@/api.js'
+
 export default {
   data: function () {
     return {
@@ -53,7 +56,7 @@ export default {
     }
   },
   components: {
-    TreeMenu, Graph
+    TreeMenu, Graph, Rule
   },
   methods: {
     collapsedSider () {
