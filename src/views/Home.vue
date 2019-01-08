@@ -120,6 +120,29 @@ export default {
         }
       })
     },
+    importData () {
+      let con
+      this.$Modal.confirm({
+
+        width: 1000,
+        render: (h) => {
+          return h('Input', {
+            props: { type: 'textarea', rows: 20, value: '实例add=jxtxzzw\n传播途径.insadd=jxtxzzw', autofocus: true, placeholder: `请写入导入文档` },
+            on: {
+              input: (val) => { con = val }
+            }
+          })
+        },
+        onCancel: () => {},
+        onOk: () => {
+          let statements = con.split('\n')
+          for (let statement of statements) {
+            console.log(statement)
+            query(statement)
+          }
+        }
+      })
+    },
     success (nodesc) {
       this.$Notice.success({
         title: '文件上传成功',
