@@ -84,45 +84,41 @@ export default {
       let txt = []
       let list = []
       let a
-      query('概念')
-        .then(res => {
-          for (let con of res.result) {
-            txt.push(`概念add=${con}`)
-            list.push(con)
-          }
-        })
-        .then(res => {
-          let start = 0
-          for (let next of list) {
-            query(next).then(ret => {
-              for (let key in ret) {
-                for (let value of ret[key]) {
-                  if (list.indexOf(value, start) === -1) {
-                    list.push(value)
-                  }
-                }
-                if (key[length - 1] !== '逆') {
-                  for (let value of ret[key]) {
-                    txt.push(`${next}.${key}add=${value}`)
-                    console.log(list)
-                  }
-                }
-              }
-            })
-          }
-          start++
-        })
-        .then(res => {
-          a = txt.join('\n')
-          this.$Modal.info({
-            width: 1000,
-            render: (h) => {
-              return h('Input', {
-                props: { type: 'textarea', rows: 20, value: a }
-              })
+      const res = await query('概念')
+      for (let con of res.result) {
+        txt.push(`概念add=${con}`)
+        list.push(con)
+      }
+
+      let start = 0
+      for (let next of list) {
+        let ret = await query(next)
+        for (let key in ret) {
+          for (let value of ret[key]) {
+            if (list.indexOf(value, start) === -1) {
+              list.push(value)
             }
+          }
+          if (key[key.length - 1] !== '逆') {
+            for (let value of ret[key]) {
+              txt.push(`${next}.${key}add=${value}`)
+              console.log(list)
+            }
+          }
+        }
+        if (list.length > 500) break
+      }
+      start++
+
+      a = txt.join('\n')
+      this.$Modal.info({
+        width: 1000,
+        render: (h) => {
+          return h('Input', {
+            props: { type: 'textarea', rows: 20, value: a }
           })
-        })
+        }
+      })
     },
     success (nodesc) {
       this.$Notice.success({
@@ -134,7 +130,7 @@ export default {
       this.$Notice.error({
         title: '上传遇到错误',
         desc: nodesc ? '' : '上传遇到错误，错误代码：不予支持，反正就是错了，我也不知道哪里错了'
-      });
+      })
     },
     uploadHandleSuccess () {
       console.log('handle success')
