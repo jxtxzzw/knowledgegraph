@@ -15,7 +15,10 @@
                 Icon(type="ios-settings")
                 | 设置
               MenuItem
-                Upload(action="https://dev.jxtxzzw.com/knowledge_graph/upload/index.php")
+                Upload(action="https://dev.jxtxzzw.com/knowledge_graph/upload/index.php",
+                :on-success="uploadHandleSuccess",
+                :on-error="uploadHandleError"
+                )
                   Button(icon="ios-cloud-upload-outline", :long="true") 上传文件
           Div(v-else)
             Menu(ref="sideMenu", width="auto")
@@ -82,6 +85,26 @@ export default {
     TreeMenu, Graph
   },
   methods: {
+    success(nodesc) {
+      this.$Notice.success({
+        title: '文件上传成功',
+        desc: nodesc ? '' : '文件上传成功，请耐心等待处理……'
+      })
+    },
+    error(nodesc) {
+      this.$Notice.error({
+        title: '上传遇到错误',
+        desc: nodesc ? '' : '上传遇到错误，错误代码：不予支持，反正就是错了，我也不知道哪里错了'
+      });
+    },
+    uploadHandleSuccess () {
+      console.log('handle success')
+      this.success(false)
+    },
+    uploadHandleError () {
+      console.log('handle error')
+      this.error(false)
+    },
     collapsedSider () {
       this.$refs.side1.toggleCollapse()
     },
