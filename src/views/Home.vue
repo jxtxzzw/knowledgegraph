@@ -5,6 +5,11 @@
         Scroll(height="1100")
           Div(v-if="!isCollapsed" )
             Menu(ref="sideMenu", width="auto", @on-select="loadData")
+              div
+                Button(long=true, @click.native="importData")
+                  | 导入
+                Button(long=true, @click.native="exportData")
+                  | 导出
               MenuItem
                 Icon(type="ios-search")
                 | 查询
@@ -72,13 +77,57 @@ export default {
     TreeMenu, Graph
   },
   methods: {
-    success(nodesc) {
+    async exportData () {
+      let txt = []
+      let list = []
+      let a
+      query('概念')
+        .then(res => {
+          for (let con of res.result) {
+            txt.push(`概念add=${con}`)
+            list.push(con)
+          }
+        })
+        .then(res => {
+          let start = 0
+          for (let next of list) {
+            query(next).then(ret => {
+              for (let key in ret) {
+                for (let value of ret[key]) {
+                  if (list.indexOf(value, start) === -1) {
+                    list.push(value)
+                  }
+                }
+                if (key[length - 1] !== '逆') {
+                  for (let value of ret[key]) {
+                    txt.push(`${next}.${key}add=${value}`)
+                    console.log(list)
+                  }
+                }
+              }
+            })
+          }
+          start++
+        })
+        .then(res => {
+          a = txt.join('\n')
+          this.$Modal.info({
+            width: 1000,
+            render: (h) => {
+              return h('Input', {
+                props: { type: 'textarea', rows: 20, value: a }
+              })
+            }
+          })
+        })
+    },
+    success (nodesc) {
       this.$Notice.success({
         title: '文件上传成功',
         desc: nodesc ? '' : '文件上传成功，请耐心等待处理……'
       })
     },
-    error(nodesc) {
+    error (nodesc) {
       this.$Notice.error({
         title: '上传遇到错误',
         desc: nodesc ? '' : '上传遇到错误，错误代码：不予支持，反正就是错了，我也不知道哪里错了'
