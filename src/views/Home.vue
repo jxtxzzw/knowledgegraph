@@ -2,14 +2,35 @@
   .layout
     Layout
       Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed", :style="{minHeight: '-webkit-fill-available'}")
-        scroll
-          Menu(ref="sideMenu", width="auto", @on-select="loadData")
-            tree-menu(v-for="(x, idx) in tree",
-                      :key="x.label",
-                      :label="x.label",
-                      :children="x.children",
-                      :depth="idx.toString()",
-                      :loaded="true")
+        Scroll(height="1100")
+          Div(v-if="!isCollapsed" )
+            Menu(ref="sideMenu", width="auto", @on-select="loadData")
+              div
+                Button(long=true, @click.native="importData")
+                  | 导入
+                Button(long=true, @click.native="exportData")
+                  | 导出
+              MenuItem
+                Icon(type="ios-search")
+                | 查询
+              tree-menu(v-for="(x, idx) in tree",
+              :label="x.label",
+              :children="x.children", :depth="idx.toString()", :loaded="true")
+              MenuItem
+                Icon(type="ios-settings")
+                | 设置
+              MenuItem
+                Upload(action="https://dev.jxtxzzw.com/knowledge_graph/upload/index.php",
+                :on-success="uploadHandleSuccess",
+                :on-error="uploadHandleError"
+                )
+                  Button(icon="ios-cloud-upload-outline", :long="true") 上传文件
+          Div(v-else)
+            Menu(ref="sideMenu", width="auto")
+              MenuItem
+                Icon(type="ios-search")
+              MenuItem
+                Icon(type="ios-settings")
       Layout
         Header(:style="{padding:0}", class="layout-header-bar")
           Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
@@ -59,6 +80,70 @@ export default {
     TreeMenu, Graph, Rule
   },
   methods: {
+    async exportData () {
+      let txt = []
+      let list = []
+      let a
+      query('概念')
+        .then(res => {
+          for (let con of res.result) {
+            txt.push(`概念add=${con}`)
+            list.push(con)
+          }
+        })
+        .then(res => {
+          let start = 0
+          for (let next of list) {
+            query(next).then(ret => {
+              for (let key in ret) {
+                for (let value of ret[key]) {
+                  if (list.indexOf(value, start) === -1) {
+                    list.push(value)
+                  }
+                }
+                if (key[length - 1] !== '逆') {
+                  for (let value of ret[key]) {
+                    txt.push(`${next}.${key}add=${value}`)
+                    console.log(list)
+                  }
+                }
+              }
+            })
+          }
+          start++
+        })
+        .then(res => {
+          a = txt.join('\n')
+          this.$Modal.info({
+            width: 1000,
+            render: (h) => {
+              return h('Input', {
+                props: { type: 'textarea', rows: 20, value: a }
+              })
+            }
+          })
+        })
+    },
+    success (nodesc) {
+      this.$Notice.success({
+        title: '文件上传成功',
+        desc: nodesc ? '' : '文件上传成功，请耐心等待处理……'
+      })
+    },
+    error (nodesc) {
+      this.$Notice.error({
+        title: '上传遇到错误',
+        desc: nodesc ? '' : '上传遇到错误，错误代码：不予支持，反正就是错了，我也不知道哪里错了'
+      });
+    },
+    uploadHandleSuccess () {
+      console.log('handle success')
+      this.success(false)
+    },
+    uploadHandleError () {
+      console.log('handle error')
+      this.error(false)
+    },
     collapsedSider () {
       this.$refs.side1.toggleCollapse()
     },

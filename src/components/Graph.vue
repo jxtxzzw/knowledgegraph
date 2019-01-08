@@ -97,7 +97,6 @@ export default {
               callback()
             },
             onOk: () => {
-              // console.log(this.value)
               query(`${from}.${this.value}add=${to}`).then(data => {
                 callback(edgeData)
               }).catch(e => callback())
@@ -190,6 +189,7 @@ export default {
 <style scoped>
   #network {
     height: 1500px;
+    width: 100%;
     border: 2px solid lightgray;
     border-radius: 5px;
   }
