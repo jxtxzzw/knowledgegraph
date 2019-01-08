@@ -40,25 +40,9 @@ import TreeMenu from '@/components/TreeMenu.vue'
 import Graph from '@/components/Graph.vue'
 import { query } from '@/api.js'
 export default {
-  data: () => {
+  data: function () {
     return {
-      tree: [
-        {
-          label: '疾病',
-          children: [],
-          loaded: false
-        },
-        {
-          label: '症状',
-          children: [],
-          loaded: false
-        },
-        {
-          label: '检查',
-          children: [],
-          loaded: false
-        }
-      ],
+      tree: [],
       isCollapsed: false,
       selfAdaptiveHeight: 0
     }
@@ -66,6 +50,9 @@ export default {
   name: 'home',
   mounted: function () {
     this.selfAdaptiveHeight = document.body.getBoundingClientRect().height
+    query('概念').then(res => {
+      this.tree = res.result.map(s => { return { label: s, children: [], loaded: false } })
+    })
   },
   computed: {
     rotateIcon () {
@@ -119,7 +106,7 @@ export default {
       obj.loaded = true
       query(obj.label).then(res => {
         if (res.hasOwnProperty('child')) {
-          console.log(res)
+          // console.log(res)
           obj.children = res.child.map(x => { return { label: x, children: [], loaded: false } })
           this.$nextTick(() => {
             this.$refs.sideMenu.openedNames.push(name)
@@ -127,6 +114,7 @@ export default {
           })
         }
       })
+      if (x.length !== 1) window.generateLabel(obj.label).then(_ => {})
     }
   }
 }
