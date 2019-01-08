@@ -211,7 +211,6 @@ export default {
               callback()
             },
             onOk: () => {
-              console.log(nodeData.parent)
               query(`实例add=${nodeData.label}`)
               query(`${this.value}.insadd=${nodeData.label}`).then(res => {
                 callback(nodeData)

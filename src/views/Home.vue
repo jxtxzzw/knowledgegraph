@@ -8,10 +8,15 @@
               MenuItem
                 Icon(type="ios-search")
                 | 查询
-              tree-menu(v-for="(x, idx) in tree", :label="x.label", :children="x.children", :depth="idx.toString()", :loaded="true")
+              tree-menu(v-for="(x, idx) in tree",
+              :label="x.label",
+              :children="x.children", :depth="idx.toString()", :loaded="true")
               MenuItem
                 Icon(type="ios-settings")
                 | 设置
+              MenuItem
+                Upload(action="https://dev.jxtxzzw.com/knowledge_graph/upload/index.php")
+                  Button(icon="ios-cloud-upload-outline", :long="true") 上传文件
           Div(v-else)
             Menu(ref="sideMenu", width="auto")
               MenuItem
