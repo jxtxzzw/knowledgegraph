@@ -10,16 +10,16 @@
                   | 导入
                 Button(long=true, @click.native="exportData")
                   | 导出
-              MenuItem
+              MenuItem(name="chaxun")
                 Icon(type="ios-search")
                 | 查询
               tree-menu(v-for="(x, idx) in tree",
               :label="x.label",
               :children="x.children", :depth="idx.toString()", :loaded="true")
-              MenuItem
+              MenuItem(name="shezhi")
                 Icon(type="ios-settings")
                 | 设置
-              MenuItem
+              MenuItem(name="upload")
                 Upload(action="https://dev.jxtxzzw.com/knowledge_graph/upload/index.php",
                 :on-success="uploadHandleSuccess",
                 :on-error="uploadHandleError"
@@ -27,9 +27,9 @@
                   Button(icon="ios-cloud-upload-outline", :long="true") 上传文件
           Div(v-else)
             Menu(ref="sideMenu", width="auto")
-              MenuItem
+              MenuItem(name="se")
                 Icon(type="ios-search")
-              MenuItem
+              MenuItem(name="st")
                 Icon(type="ios-settings")
       Layout
         Header(:style="{padding:0}", class="layout-header-bar")
@@ -82,33 +82,58 @@ export default {
   methods: {
     async exportData () {
       let txt = []
+      let concept = []
       let list = []
       let a
-      const res = await query('概念')
+      let res = await query('概念')
       for (let con of res.result) {
         txt.push(`概念add=${con}`)
-        list.push(con)
+        concept.push(con)
       }
-
-      let start = 0
-      for (let next of list) {
-        let ret = await query(next)
-        for (let key in ret) {
-          for (let value of ret[key]) {
-            if (list.indexOf(value, start) === -1) {
-              list.push(value)
-            }
-          }
+      res = await query('关系')
+      for (let con of res.result) {
+        if (con[con.length - 1] !== '逆') {
+          txt.push(`关系add=${con}`)
+        }
+      }
+      for (let x of concept) {
+        res = await query(x)
+        for (let y of res.child) {
+          txt.push(`${x}.insadd=${y}`)
+          list.push(y)
+        }
+      }
+      for (let x of list) {
+        res = await query(x)
+        console.log(res)
+        for (let key in res) {
+          if (['parents', 'attr', 'csyn'].indexOf(key) !== -1) continue
           if (key[key.length - 1] !== '逆') {
-            for (let value of ret[key]) {
-              txt.push(`${next}.${key}add=${value}`)
-              console.log(list)
+            for (let y in res['key']) {
+              txt.push(`${x}.${key}add=${y}`)
             }
           }
         }
-        if (list.length > 500) break
       }
-      start++
+      // let start = 0
+      // for (let next of list) {
+      //   let ret = await query(next)
+      //   for (let key in ret) {
+      //     for (let value of ret[key]) {
+      //       if (list.indexOf(value, start) === -1) {
+      //         list.push(value)
+      //       }
+      //     }
+      //     if (key[key.length - 1] !== '逆') {
+      //       for (let value of ret[key]) {
+      //         txt.push(`${next}.${key}add=${value}`)
+      //         console.log(list)
+      //       }
+      //     }
+      //   }
+      //   if (list.length > 500) break
+      // }
+      // start++
 
       a = txt.join('\n')
       this.$Modal.info({
