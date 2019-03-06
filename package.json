@@ -12,6 +12,7 @@
     "vis": "^4.21.0",
     "vue": "^2.5.17",
     "vue-gemini-scrollbar": "^2.0.0",
+    "vue-hot-reload-api": "^2.3.3",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
