@@ -135,16 +135,13 @@ export default {
     const data = { nodes: this.nodes, edges: this.edges }
     this.network = new vis.Network(document.getElementById('network'), data, options)
     this.network.on('selectNode', ({ nodes }) => this.generate(nodes[0]))
-    // this.generate('肺癌')
   },
   methods: {
     async tryAddNode (u) {
       if (this.nodes.get(u) != null) return
-
       const data = await query(u)
       if (!data.hasOwnProperty('parents')) return
       const cons = data.parents[0]
-
       if (!(cons in this.consToGroupMap)) this.consToGroupMap[cons] = this.groupSet[this.lastUnusedGroup++]
       this.nodes.add({ id: u, label: cutName(u), title: u, group: this.consToGroupMap[cons] })
     },
@@ -175,7 +172,7 @@ export default {
           const title = reverse ? key.slice(0, -1) : key
           if (!reverse) await this.addEdge(self, to, title)
           else await this.addEdge(to, self, title)
-
+          console.log('ssss')
           for (let x of window.customRule) {
             if (x[0] === key) await this.applyRule(self, to, x)
           }

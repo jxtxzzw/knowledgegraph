@@ -6,7 +6,9 @@
 export default {
   name: 'Rule',
   created: function () {
-    window.customRule = localStorage.ruleValue.split('\n').map(s => s.split(/\.|=/))
+    if (localStorage.ruleValue) {
+      window.customRule = localStorage.ruleValue.split('\n').map(s => s.split(/\.|=/))
+    } else window.customRule = []
   },
   methods: {
     handleRender () {
