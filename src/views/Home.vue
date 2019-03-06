@@ -1,4 +1,5 @@
 <template lang="pug">
+<<<<<<< HEAD
   .layout
     Layout
       Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed", :style="{minHeight: '-webkit-fill-available'}")
@@ -31,14 +32,48 @@
                 Icon(type="ios-search")
               MenuItem(name="st")
                 Icon(type="ios-settings")
+=======
+  div(class="layout")
+    Layout(:style="{minHeight: '-webkit-fill-available'}")
+>>>>>>> f1c7564... 真·自适应高度
       Layout
-        Header(:style="{padding:0}", class="layout-header-bar")
-          Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
-            | Header
-          Rule
-        Content(:style="{margin: '20px', background: '#fff', height: 'auto'}")
-          Card(:style="{width: 'auto', minHeight: '-webkit-fill-available'}")
-            Graph(:style="{width: 'auto', minHeight: '-webkit-fill-available' }")
+        Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed",  :style="{background: '#fff', margin: '0 0 0 0'}")
+          Scroll
+            Menu(accordion, active-name="1-2", theme="light", width="auto", :open-names="['1']", @on-select="changeMenu")
+              Div(v-if="!isCollapsed" )
+                Menu(ref="sideMenu", width="auto", @on-select="loadData")
+                  div
+                    Button(long=true, @click.native="importData")
+                      | 导入
+                    Button(long=true, @click.native="exportData")
+                      | 导出
+                  MenuItem
+                    Icon(type="ios-search")
+                    | 查询
+                  tree-menu(v-for="(x, idx) in tree",
+                  :label="x.label",
+                  :children="x.children", :depth="idx.toString()", :loaded="true")
+                  MenuItem
+                    Icon(type="ios-settings")
+                    | 设置
+                  MenuItem
+                    Upload(action="https://dev.jxtxzzw.com/knowledge_graph/upload/index.php",
+                    :on-success="uploadHandleSuccess",
+                    :on-error="uploadHandleError"
+                    )
+                      Button(icon="ios-cloud-upload-outline", :long="true") 上传文件
+              Div(v-else)
+                Menu(ref="sideMenu", width="auto")
+                  MenuItem
+                    Icon(type="ios-search")
+                  MenuItem
+                    Icon(type="ios-settings")
+        Layout
+          Header(:style="{padding:0}", class="layout-header-bar")
+            Icon(@click.native="collapsedSider", :class="rotateIcon", :style="{margin: '0 20px'}", type="md-menu", size="24")
+              | 知识图谱
+            Rule
+          Graph
 </template>
 
 <script>
