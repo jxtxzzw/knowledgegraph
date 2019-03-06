@@ -38,30 +38,31 @@
 >>>>>>> f1c7564... 真·自适应高度
       Layout
         Sider(ref="side1", hide-trigger, collapsible, :collapsed-width="78", v-model="isCollapsed",  :style="{background: '#fff', margin: '0 0 0 0'}")
-          Scroll
+          Scroll(height="1328")
             Menu(accordion, active-name="1-2", theme="light", width="auto", :open-names="['1']", @on-select="changeMenu")
               Div(v-if="!isCollapsed" )
                 Menu(ref="sideMenu", width="auto", @on-select="loadData")
-                  div
-                    Button(long=true, @click.native="importData")
-                      | 导入
-                    Button(long=true, @click.native="exportData")
-                      | 导出
-                  MenuItem
-                    Icon(type="ios-search")
-                    | 查询
-                  tree-menu(v-for="(x, idx) in tree",
-                  :label="x.label",
-                  :children="x.children", :depth="idx.toString()", :loaded="true")
-                  MenuItem
-                    Icon(type="ios-settings")
-                    | 设置
-                  MenuItem
-                    Upload(action="https://dev.jxtxzzw.com/knowledge_graph/upload/index.php",
-                    :on-success="uploadHandleSuccess",
-                    :on-error="uploadHandleError"
-                    )
-                      Button(icon="ios-cloud-upload-outline", :long="true") 上传文件
+                  Submenu(name="search")
+                    template(slot="title")
+                      Icon(type="ios-search")
+                      | 查询
+                    tree-menu(v-for="(x, idx) in tree",
+                    :label="x.label",
+                    :children="x.children", :depth="idx.toString()", :loaded="true")
+                  Submenu(name="settings")
+                    template(slot="title")
+                      Icon(type="ios-settings")
+                      | 设置
+                    div
+                      Button(long=true, @click.native="importData")
+                        | 导入
+                      Button(long=true, @click.native="exportData")
+                        | 导出
+                      <!--Upload(action="https://dev.jxtxzzw.com/knowledge_graph/upload/index.php",-->
+                      //:on-success="uploadHandleSuccess",
+                      //:on-error="uploadHandleError"
+                      //)
+                      //  Button(icon="ios-cloud-upload-outline", long=true) 上传文件
               Div(v-else)
                 Menu(ref="sideMenu", width="auto")
                   MenuItem
@@ -92,10 +93,13 @@ export default {
   },
   name: 'home',
   mounted: function () {
-    this.selfAdaptiveHeight = document.body.getBoundingClientRect().height
     query('概念').then(res => {
       this.tree = res.result.map(s => { return { label: s, children: [], loaded: false } })
     })
+    if (this.selfAdaptiveHeight === 0) {
+      this.selfAdaptiveHeight = document.documentElement.clientHeight
+    }
+    console.log(this.selfAdaptiveHeight)
   },
   computed: {
     rotateIcon () {
