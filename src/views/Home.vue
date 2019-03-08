@@ -99,7 +99,6 @@ export default {
     if (this.selfAdaptiveHeight === 0) {
       this.selfAdaptiveHeight = document.documentElement.clientHeight
     }
-    console.log(this.selfAdaptiveHeight)
   },
   computed: {
     rotateIcon () {
@@ -120,66 +119,48 @@ export default {
   },
   methods: {
     async exportData () {
-      let txt = []
-      let concept = []
-      let list = []
-      let a
-      let res = await query('概念')
-      for (let con of res.result) {
-        txt.push(`概念add=${con}`)
-        concept.push(con)
-      }
-      res = await query('关系')
-      for (let con of res.result) {
-        if (con[con.length - 1] !== '逆') {
-          txt.push(`关系add=${con}`)
-        }
-      }
-      for (let x of concept) {
-        res = await query(x)
-        for (let y of res.child) {
-          txt.push(`${x}.insadd=${y}`)
-          list.push(y)
-        }
-      }
-      for (let x of list) {
-        res = await query(x)
-        console.log(res)
-        for (let key in res) {
-          if (['parents', 'attr', 'csyn'].indexOf(key) !== -1) continue
-          if (key[key.length - 1] !== '逆') {
-            for (let y in res['key']) {
-              txt.push(`${x}.${key}add=${y}`)
-            }
-          }
-        }
-      }
-      // let start = 0
-      // for (let next of list) {
-      //   let ret = await query(next)
-      //   for (let key in ret) {
-      //     for (let value of ret[key]) {
-      //       if (list.indexOf(value, start) === -1) {
-      //         list.push(value)
-      //       }
-      //     }
+      // let txt = []
+      // let concept = []
+      // let list = []
+      // let a
+      // let res = await query('概念')
+      // for (let con of res.result) {
+      //   txt.push(`概念add=${con}`)
+      //   concept.push(con)
+      // }
+      // res = await query('关系')
+      // for (let con of res.result) {
+      //   if (con[con.length - 1] !== '逆') {
+      //     txt.push(`关系add=${con}`)
+      //   }
+      // }
+      // for (let x of concept) {
+      //   res = await query(x)
+      //   for (let y of res.child) {
+      //     txt.push(`实例add=${y}`)
+      //     txt.push(`${x}.insadd=${y}`)
+      //     list.push(y)
+      //   }
+      // }
+      // for (let x of list) {
+      //   res = await query(x)
+      //   for (let key in res) {
+      //     if (['parents', 'attr', 'csyn'].indexOf(key) !== -1) continue
       //     if (key[key.length - 1] !== '逆') {
-      //       for (let value of ret[key]) {
-      //         txt.push(`${next}.${key}add=${value}`)
-      //         console.log(list)
+      //       for (let y in res[key]) {
+      //         txt.push(`${x}.${key}add=${res[key][y]}`)
       //       }
       //     }
       //   }
-      //   if (list.length > 500) break
       // }
-      // start++
-
-      a = txt.join('\n')
+      // a = txt.join('\n')
+      let res = await query('export')
+      console.log(res.result)
       this.$Modal.info({
         width: 1000,
         render: (h) => {
           return h('Input', {
-            props: { type: 'textarea', rows: 20, value: a }
+            props: { type: 'textarea', rows: 20, value: res.result }
           })
         }
       })
@@ -191,7 +172,7 @@ export default {
         width: 1000,
         render: (h) => {
           return h('Input', {
-            props: { type: 'textarea', rows: 20, value: '实例add=jxtxzzw\n传播途径.insadd=jxtxzzw', autofocus: true, placeholder: `请写入导入文档` },
+            props: { type: 'textarea', rows: 20, autofocus: true, placeholder: `请写入导入内容` },
             on: {
               input: (val) => { con = val }
             }
@@ -199,11 +180,8 @@ export default {
         },
         onCancel: () => {},
         onOk: () => {
-          let statements = con.split('\n')
-          for (let statement of statements) {
-            console.log(statement)
-            query(statement)
-          }
+          let res = query(`import${con}`)
+          alert(res)
         }
       })
     },

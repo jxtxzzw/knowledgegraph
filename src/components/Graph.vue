@@ -172,7 +172,6 @@ export default {
           const title = reverse ? key.slice(0, -1) : key
           if (!reverse) await this.addEdge(self, to, title)
           else await this.addEdge(to, self, title)
-          console.log('ssss')
           for (let x of window.customRule) {
             if (x[0] === key) await this.applyRule(self, to, x)
           }
