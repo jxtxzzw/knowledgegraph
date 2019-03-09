@@ -1,0 +1,87 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+
+医疗推理
+
+{% endblock %}
+
+{% block navbar %}
+
+<div class="navbar navbar-inverse" role="navigation">
+         <div class="container">
+             <div class="navbar-header">
+                 <button type="button" class="navbar-toggle"
+                  data-toggle="collapse" data-target=".navbar-collapse">
+                     <span class="sr-only">Toggle navigation</span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                 </button>
+                 <a class="navbar-brand" href="/">医疗推理</a>
+             </div>
+             {#
+             <div class="navbar-collapse collapse">
+                 <ul class="nav navbar-nav">
+                     <li><a href="/">Home</a></li>
+                 </ul>
+             </div>
+             #}
+         </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="'container">
+    <div class="page-header">
+    <h1>
+    肺部疾病
+
+    </h1>
+
+    </div>
+
+</div>
+<div class="row">
+    <div class="panel-group">
+        {% for k,v in info.items() %}
+        {% if v %}
+        <div class="col-sm-4">
+            <div class="panel panel-defaut">
+                <div class="panel-heading">
+                    <h3>
+                    {{ k }}
+                    </h3>
+                </div>
+                <div class="panel-body">
+                <ul class="list-group">
+                    {% for line in v %}
+                    {% if line %}
+                    <li class="list-group-item">
+                        <a href="/search/{{ line }}"> {{ line }}&nbsp </a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    {% for line in v %}
+                    {% if line %}
+                    <li class="list-group-item">
+                        {% for i in line %}
+                        {{ i }}&nbsp
+                        {% endfor %}
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+</div>
+
+
+{% endblock %}
